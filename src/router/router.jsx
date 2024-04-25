@@ -1,7 +1,7 @@
-import Login from "@/modules/authentication/Login.jsx";
+import Authentication from "@/pages/authentication/Authentication.jsx";
 export const routes = [
   {
-    path: "/",
-    element: <Login />,
+    path: "/authenticaion",
+    element: <Authentication />,
   },
 ];

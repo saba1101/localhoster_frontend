@@ -1,9 +1,21 @@
 import { Fragment } from "react";
 
-const Register = () => {
+const Register = ({ data, updateFormValues }) => {
   return (
     <Fragment>
-      <h1>Register Page</h1>
+      <h2>Register</h2>
+      <ul>
+        {data?.map((element, index) => {
+          return (
+            <li key={index}>
+              <element.component
+                {...element.props}
+                onChange={(event) => updateFormValues(event, element.key)}
+              />
+            </li>
+          );
+        })}
+      </ul>
     </Fragment>
   );
 };

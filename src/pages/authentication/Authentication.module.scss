@@ -1,0 +1,43 @@
+.authenticaionContainer {
+  width: 100%;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background: rgb(25, 62, 110);
+  background: -moz-linear-gradient(
+    236deg,
+    rgba(25, 62, 110, 1) 23%,
+    rgba(74, 161, 236, 1) 92%
+  );
+  background: -webkit-linear-gradient(
+    236deg,
+    rgba(25, 62, 110, 1) 23%,
+    rgba(74, 161, 236, 1) 92%
+  );
+  background: linear-gradient(
+    236deg,
+    rgba(25, 62, 110, 1) 23%,
+    rgba(74, 161, 236, 1) 92%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#193e6e",endColorstr="#4aa1ec",GradientType=1);
+  @include centerEl;
+
+  .authenticaionField {
+    width: 36.8125rem;
+    min-height: 299px;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    padding: 2.5rem 3rem;
+    h2 {
+      color: rgba(black, 0.6);
+    }
+    ul {
+      @include flex(center, center, column, 1rem);
+      margin-top: 2rem;
+      li {
+        width: 100%;
+      }
+    }
+  }
+}
