@@ -26,8 +26,8 @@ const Authentication = () => {
         };
         await serviceLogin(JSON.stringify(dataSet)).then((response) => {
           if (response.data) {
-            console.log(response);
             window.localStorage.setItem("token", response.data.token);
+            window.localStorage.setItem("isLoggedIn", true);
             setForm((prev) => {
               const newForm = [...prev];
               newForm.forEach((el) => (el.props.value = ""));
@@ -41,6 +41,7 @@ const Authentication = () => {
             setAuthState({ isLoggedIn: true });
           } else {
             setAuthState({ isLoggedIn: false });
+            window.localStorage.setItem("isLoggedIn", false);
           }
         });
         break;
