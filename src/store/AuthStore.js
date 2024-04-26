@@ -4,15 +4,19 @@ export const AuthStore = createSlice({
   name: "AuthStore",
   initialState: {
     isLoggedIn: false,
+    userDetails: {},
   },
 
   reducers: {
     SetAuth: (state, action) => {
-      state.initialState = action.payload;
+      state.isLoggedIn = action.payload;
+    },
+    SetUserDetails: (state, action) => {
+      state.userDetails = action.payload;
     },
   },
 });
 
-export const { SetAuth } = AuthStore.actions;
+export const { SetAuth, SetUserDetails } = AuthStore.actions;
 
 export default AuthStore.reducer;

@@ -1,0 +1,18 @@
+header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  padding: 1rem 1.5rem;
+  background: #ffff;
+  box-shadow: 0.0625rem 0px 0.625rem #fafafa;
+  margin-bottom: 2.25rem;
+  nav {
+    @include flex(space-between, center, row, initial);
+
+    .logo {
+      svg {
+        width: 9.1875rem;
+      }
+    }
+  }
+}

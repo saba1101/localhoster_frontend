@@ -3,28 +3,47 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { routes } from "@/router/router.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import Axios, { setupAxiosInterceptors } from "./utils/axios";
+import { setupAxiosInterceptors } from "./utils/axios";
+import Header from "./components/header/Header";
+import { getUserDetails } from "./services/user";
+import { SetAuth, SetUserDetails } from "./store/AuthStore";
 function App() {
   const { isLoggedIn } = useSelector((state) => state.AuthStore.isLoggedIn);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  Axios.get("/user/getAll");
-  const checkLoginStatus = () => {
-    if (localStorage.getItem("isLoggedIn") == "false" && !isLoggedIn) {
+
+  const checkLoginStatus = async () => {
+    dispatch(
+      SetAuth(
+        localStorage.getItem("isLoggedIn") == "true"
+          ? Boolean(localStorage.getItem("isLoggedIn"))
+          : false
+      )
+    );
+    if (
+      (localStorage.getItem("isLoggedIn") == "false" && !isLoggedIn) ||
+      (!isLoggedIn && !localStorage.getItem("isLoggedIn"))
+    ) {
       navigate("/authentication");
     } else {
-      navigate("/");
+      const userId = localStorage.getItem("userId");
+      userId &&
+        (await getUserDetails(userId).then((response) => {
+          dispatch(SetUserDetails(response.data));
+        }));
     }
   };
+
   useEffect(() => {
     setupAxiosInterceptors(dispatch);
   }, [dispatch]);
   useEffect(() => {
     checkLoginStatus();
-  }, [isLoggedIn]);
+  }, []);
 
   return (
     <Fragment>
+      <Header />
       <Routes>
         {routes.map((route) => {
           return (

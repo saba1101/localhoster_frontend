@@ -10,7 +10,7 @@ import { openNotificationWithIcon } from "../../utils/useNotification";
 import { serviceLogin } from "../../services/login";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { SetAuth } from "../../store/AuthStore";
+import { SetAuth, SetUserDetails } from "../../store/AuthStore";
 
 const Authentication = () => {
   // const isLoggedIn = useSelector((state) => state.AuthStore.isLoggedIn);
@@ -33,6 +33,8 @@ const Authentication = () => {
           if (response.data) {
             window.localStorage.setItem("token", response.data.token);
             window.localStorage.setItem("isLoggedIn", true);
+            window.localStorage.setItem("userId", response.data.user._id);
+
             setForm((prev) => {
               const newForm = [...prev];
               newForm.forEach((el) => (el.props.value = ""));
@@ -45,9 +47,12 @@ const Authentication = () => {
             );
             navigate("/");
             dispatch(SetAuth(true));
+            dispatch(SetUserDetails(response.data.user));
           } else {
             window.localStorage.setItem("isLoggedIn", false);
-            dispatch(SetAuth(true));
+            window.localStorage.setItem("userId", null);
+            dispatch(SetAuth(false));
+            dispatch(SetUserDetails({}));
           }
         });
         break;
