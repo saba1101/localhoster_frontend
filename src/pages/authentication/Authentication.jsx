@@ -8,12 +8,17 @@ import { RegisterForm } from "@/modules/authentication/form/RegisterForm";
 import { serviceRegister } from "../../services/register";
 import { openNotificationWithIcon } from "../../utils/useNotification";
 import { serviceLogin } from "../../services/login";
-import { useStore } from "../../store/store";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { SetAuth } from "../../store/AuthStore";
+
 const Authentication = () => {
+  // const isLoggedIn = useSelector((state) => state.AuthStore.isLoggedIn);
+  const dispatch = useDispatch();
   const [view, setView] = useState("LOGIN");
   const [tabs, setTabs] = useState([]);
   const [form, setForm] = useState([]);
-  const { setAuthState } = useStore();
+  const navigate = useNavigate();
   const submit = async (e, type) => {
     e.stopPropagation();
     e.preventDefault();
@@ -38,10 +43,11 @@ const Authentication = () => {
               "Login Complete",
               response.data.message
             );
-            setAuthState({ isLoggedIn: true });
+            navigate("/");
+            dispatch(SetAuth(true));
           } else {
-            setAuthState({ isLoggedIn: false });
             window.localStorage.setItem("isLoggedIn", false);
+            dispatch(SetAuth(true));
           }
         });
         break;

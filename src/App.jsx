@@ -1,19 +1,27 @@
 import { Fragment, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { routes } from "@/router/router.jsx";
-import { useStore } from "./store/store";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import Axios, { setupAxiosInterceptors } from "./utils/axios";
 function App() {
-  const isLoggedIn = useStore((state) => state.isLoggedIn);
+  const { isLoggedIn } = useSelector((state) => state.AuthStore.isLoggedIn);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  Axios.get("/user/getAll");
   const checkLoginStatus = () => {
-    if (!window.localStorage.getItem("isLoggedIn") && !isLoggedIn) {
+    if (localStorage.getItem("isLoggedIn") == "false" && !isLoggedIn) {
       navigate("/authentication");
-    } else navigate("/");
+    } else {
+      navigate("/");
+    }
   };
-
+  useEffect(() => {
+    setupAxiosInterceptors(dispatch);
+  }, [dispatch]);
   useEffect(() => {
     checkLoginStatus();
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <Fragment>

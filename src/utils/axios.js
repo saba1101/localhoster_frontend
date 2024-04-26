@@ -1,6 +1,7 @@
+// axios.js
 import axios from "axios";
 import { notification } from "antd";
-import { useStore } from "../store/store.js";
+import { SetAuth } from "../store/AuthStore";
 
 const config = {
   baseURL: "http://127.0.0.1:2000",
@@ -19,39 +20,38 @@ const requestInterceptorCallback = (config) => {
   return config;
 };
 
-const Axios = axios.create({ ...config });
-
-Axios.interceptors.request.use(requestInterceptorCallback);
-
-const handleSessionExpired = () => {
+const handleSessionExpired = (dispatch) => {
   window.localStorage.setItem("isLoggedIn", false);
   window.localStorage.setItem("token", null);
-  const { setAuthState } = useStore.getState();
-  setAuthState({ isLoggedIn: false });
+  dispatch(SetAuth(false));
 };
 
-Axios.interceptors.response.use(
-  (response) => {
-    if (response.data.message) {
-      openNotificationWithIcon("error", "Error", response.data.message);
+const Axios = axios.create({ ...config });
+
+// Setup interceptors inside a function
+export const setupAxiosInterceptors = (dispatch) => {
+  Axios.interceptors.request.use(requestInterceptorCallback);
+
+  Axios.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (err) => {
+      if (
+        err.response &&
+        err.response.data &&
+        err.response.data.message === "Session Expired"
+      ) {
+        handleSessionExpired(dispatch);
+      }
+      if (err.message) {
+        openNotificationWithIcon("error", "Error", err.message);
+      } else {
+        openNotificationWithIcon("error", "Error", "An error occurred");
+      }
+      return Promise.reject(err);
     }
-    return response;
-  },
-  (err) => {
-    if (
-      err.response &&
-      err.response.data &&
-      err.response.data.message === "Session Expired"
-    ) {
-      handleSessionExpired();
-    }
-    if (err.message) {
-      openNotificationWithIcon("error", "Error", err.message);
-    } else {
-      openNotificationWithIcon("error", "Error", "An error occurred");
-    }
-    return Promise.reject(err);
-  }
-);
+  );
+};
 
 export default Axios;
