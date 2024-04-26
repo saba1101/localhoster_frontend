@@ -5,12 +5,16 @@ import { UserOutlined } from "@ant-design/icons";
 import { Space, Button } from "antd";
 import { SetAuth, SetUserDetails } from "../../store/AuthStore";
 import { useNavigate } from "react-router";
+import { serviceLogOut } from "../../services/logout";
 const Header = () => {
   const { userDetails, isLoggedIn } = useSelector((state) => state.AuthStore);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onLogOut = () => {
+  const onLogOut = async () => {
+    const token = localStorage.getItem("token") || null;
+    if (!token) return;
+    await serviceLogOut(token);
     localStorage.setItem("token", null);
     localStorage.setItem("isLoggedIn", false);
     localStorage.setItem("userId", null);
