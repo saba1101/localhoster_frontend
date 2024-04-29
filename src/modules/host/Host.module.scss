@@ -1,0 +1,27 @@
+.contentHost {
+  width: 100%;
+  padding: 1rem;
+  .contentHeader {
+    @include flex(flex-end, center, row, 1rem);
+  }
+  .contentBody {
+    width: 100%;
+  }
+}
+.modalTitle {
+  h1 {
+    color: #575757;
+    font-size: 24px;
+  }
+}
+
+.modalForm {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  ul {
+    @include flex(flex-start, flex-start, column, 1rem);
+    li {
+      width: 100%;
+    }
+  }
+}

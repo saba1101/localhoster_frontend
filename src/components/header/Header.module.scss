@@ -5,9 +5,43 @@ header {
   padding: 1rem 1.5rem;
   background: #ffff;
   box-shadow: 0.0625rem 0px 0.625rem #fafafa;
-  margin-bottom: 2.25rem;
+  margin-bottom: 1rem;
+  z-index: 90;
   nav {
     @include flex(space-between, center, row, initial);
+
+    ul {
+      @include flex(center, center, row, 1.5rem);
+      li {
+        a {
+          color: #575757;
+          &.active {
+            color: #00c29f;
+            &::after {
+              content: "";
+              width: 0.125rem;
+              height: 100%;
+              position: absolute;
+              left: -0.625rem;
+              top: 50%;
+              transform: translate(0, -50%);
+              background: #00c29f;
+              transition: 0.2s;
+            }
+          }
+        }
+        span {
+          font-size: 1.0625rem;
+          font-weight: 500;
+        }
+
+        &:hover {
+          a {
+            color: #00c29f;
+          }
+        }
+      }
+    }
 
     .logo {
       svg {

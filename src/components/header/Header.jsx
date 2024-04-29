@@ -1,15 +1,20 @@
 import style from "./Header.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, HomeOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Space, Button } from "antd";
 import { SetAuth, SetUserDetails } from "../../store/AuthStore";
 import { useNavigate } from "react-router";
 import { serviceLogOut } from "../../services/logout";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+
 const Header = () => {
   const { userDetails, isLoggedIn } = useSelector((state) => state.AuthStore);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [navItems, setNavItems] = useState();
 
   const onLogOut = async () => {
     const token = localStorage.getItem("token") || null;
@@ -22,6 +27,21 @@ const Header = () => {
     dispatch(SetUserDetails({}));
     navigate("/authentication");
   };
+
+  useEffect(() => {
+    setNavItems([
+      {
+        link: "/",
+        title: "Home",
+        icon: <HomeOutlined />,
+      },
+      {
+        link: "/becomeahost",
+        title: "Become A Host",
+        icon: <UserAddOutlined />,
+      },
+    ]);
+  }, []);
 
   return !isLoggedIn ? (
     ""
@@ -76,6 +96,21 @@ const Header = () => {
           </svg>
         </div>
         <ul>
+          {navItems?.map((nav, ind) => (
+            <li key={ind}>
+              <NavLink
+                to={nav.link}
+                className={({ isActive, isPending }) =>
+                  isPending ? style.pending : isActive ? style.active : ""
+                }
+              >
+                <Space>
+                  {nav?.icon}
+                  <span>{nav.title}</span>
+                </Space>
+              </NavLink>
+            </li>
+          ))}
           <li></li>
         </ul>
         <div className={style.userDetails}>

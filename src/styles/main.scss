@@ -12,6 +12,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  a {
+    text-decoration: none;
+    transition: 0.2s;
+    position: relative;
+  }
 }
 
 body {
