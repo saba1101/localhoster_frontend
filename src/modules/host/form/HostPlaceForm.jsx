@@ -1,14 +1,15 @@
 import { Input } from "antd";
 
-export const CategoryForm = [
+export const HostPlaceForm = [
   {
     component: Input,
     key: "NAME",
     props: {
       value: "",
-      placeholder: "Enter Category Name",
-      size: "medium",
+      placeholder: "Enter Host Name",
+      size: "large",
       type: "text",
+      required: true,
     },
   },
   {
@@ -16,8 +17,8 @@ export const CategoryForm = [
     key: "DESCRIPTION",
     props: {
       value: "",
-      placeholder: "Enter Category Description",
-      size: "medium",
+      placeholder: "Enter Host Locaton",
+      size: "large",
       type: "text",
     },
   },

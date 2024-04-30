@@ -1,15 +1,8 @@
-import {
-  Button,
-  Empty,
-  Avatar,
-  Modal,
-  Popconfirm,
-  Card,
-  Segmented,
-} from "antd";
+import { Button, Empty, Modal, Popconfirm, Card, Segmented } from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
 import { CategoryForm } from "./form/CategoryForm";
+import { HostPlaceForm } from "./form/HostPlaceForm";
 import {
   createCategory,
   getCategories,
@@ -28,6 +21,7 @@ const Host = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalOptions, setModalOptions] = useState({});
   const [categoryForm, setCategoryForm] = useState([]);
+  const [hostPlaceform, setHostPlaceform] = useState([]);
   const [dataCategories, setDataCategories] = useState([]);
   const [dataHostedPlaces, setDataHostedPlaces] = useState([]);
   const [currentTab, setCurentTab] = useState("CATEGORIES");
@@ -45,13 +39,26 @@ const Host = () => {
   ]);
 
   const { Meta } = Card;
-  const onModalOpen = () => {
+  const onModalOpen = (type) => {
+    switch (type) {
+      case "CREATE_CATEGORY": {
+        setModalOptions({
+          title: "Create Category",
+          template: TemplateCategoryForm,
+          requestType: "CREATE_CATEGORY",
+        });
+        break;
+      }
+      case "CREATE_HOST": {
+        setModalOptions({
+          title: "Host a Place",
+          template: TemplateHotsPlaceForm,
+          requestType: "CREATE_HOST",
+        });
+        break;
+      }
+    }
     setIsModalOpen(true);
-    setModalOptions({
-      title: "Create Category",
-      template: TemplateCategoryForm,
-      requestType: "CREATE_CATEGORY",
-    });
   };
 
   const onModalClose = () => {
@@ -165,9 +172,30 @@ const Host = () => {
       </ul>
     );
   };
+  const TemplateHotsPlaceForm = () => {
+    return (
+      <ul>
+        {hostPlaceform.map((element, index) => {
+          return (
+            <li key={index}>
+              {
+                <element.component
+                  {...element.props}
+                  onChange={(e) =>
+                    updateValues("CREATE_HOST", element.key, e.target.value)
+                  }
+                />
+              }
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   useEffect(() => {
     setCategoryForm(CategoryForm);
+    setHostPlaceform(HostPlaceForm);
     getAndUpdateCategories();
   }, []);
 
@@ -182,10 +210,19 @@ const Host = () => {
             size="medium"
           />
 
-          <Button size="small" type="primary" onClick={onModalOpen}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => onModalOpen("CREATE_CATEGORY")}
+          >
             Create Category
           </Button>
-          <Button size="small" type="primary" style={{ background: "#00c29f" }}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => onModalOpen("CREATE_HOST")}
+            style={{ background: "#00c29f" }}
+          >
             Host A Place
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import style from "./Header.module.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { Avatar } from "antd";
+import { Avatar, Badge } from "antd";
 import { UserOutlined, HomeOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Space, Button } from "antd";
 import { SetAuth, SetUserDetails } from "../../store/AuthStore";
@@ -50,7 +50,7 @@ const Header = () => {
       <nav>
         <div className={style.logo}>
           <svg
-            width="147"
+            width="120"
             height="41"
             viewBox="0 0 157 41"
             fill="none"
@@ -114,26 +114,28 @@ const Header = () => {
           <li></li>
         </ul>
         <div className={style.userDetails}>
-          <div className={style.avatar}></div>
           <Space>
             {/* <Dropdown menu={{ items }} trigger={["click"]}> */}
             <Space>
-              <Avatar
-                shape="square"
-                style={{
-                  backgroundColor: "#fde3cf",
-                  color: "#f56a00",
-                  verticalAlign: "middle",
-                }}
-                size="large"
-              >
-                {userDetails?.UserName}
-              </Avatar>
+              <Badge dot={true}>
+                <Avatar
+                  shape="round"
+                  style={{
+                    backgroundColor: "#fde3cf",
+                    color: "#f56a00",
+                    verticalAlign: "middle",
+                  }}
+                  size="medium"
+                >
+                  {userDetails?.UserName}
+                </Avatar>
+              </Badge>
+
               {/* <span style={{ cursor: "pointer" }}>Profile</span> */}
               {/* <DownOutlined /> */}
             </Space>
             {/* </Dropdown> */}
-            <Button size={"large"} type="primary" danger onClick={onLogOut}>
+            <Button size={"medium"} type="primary" danger onClick={onLogOut}>
               <Space>
                 <UserOutlined />
                 <span style={{ cursor: "pointer" }}>Logout</span>
