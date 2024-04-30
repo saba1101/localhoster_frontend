@@ -1,18 +1,50 @@
-import { Button, Empty, Modal, Space, Card, Tabs } from "antd";
+import {
+  Button,
+  Empty,
+  Avatar,
+  Modal,
+  Popconfirm,
+  Card,
+  Segmented,
+} from "antd";
 import style from "@/modules/host/Host.module.scss";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CategoryForm } from "./form/CategoryForm";
-import { createCategory, getCategories } from "../../services/product";
+import {
+  createCategory,
+  getCategories,
+  deleteCategory,
+  updateCategory,
+} from "../../services/product";
 import { openNotificationWithIcon } from "../../utils/useNotification";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteFilled,
+  HomeFilled,
+  TagFilled,
+} from "@ant-design/icons";
 
 const Host = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalOptions, setModalOptions] = useState({});
   const [categoryForm, setCategoryForm] = useState([]);
   const [dataCategories, setDataCategories] = useState([]);
-  const { Meta } = Card;
+  const [dataHostedPlaces, setDataHostedPlaces] = useState([]);
+  const [currentTab, setCurentTab] = useState("CATEGORIES");
+  const tabOptions = useRef([
+    {
+      label: "Categories",
+      value: "CATEGORIES",
+      icon: <TagFilled />,
+    },
+    {
+      label: "Hosted Places",
+      value: "HOSTED_PLACES",
+      icon: <HomeFilled />,
+    },
+  ]);
 
+  const { Meta } = Card;
   const onModalOpen = () => {
     setIsModalOpen(true);
     setModalOptions({
@@ -25,6 +57,12 @@ const Host = () => {
   const onModalClose = () => {
     setIsModalOpen(false);
     setModalOptions({});
+    categoryForm.find((el) => el.key === "NAME").props.value = "";
+    categoryForm.find((el) => el.key === "DESCRIPTION").props.value = "";
+  };
+
+  const onTabChange = (e) => {
+    setCurentTab(e);
   };
 
   const updateValues = (type, key, value) => {
@@ -60,12 +98,45 @@ const Host = () => {
 
         break;
       }
+      case "UPDATE_CATEGORY": {
+        DataSet = {
+          Title: categoryForm.find((el) => el.key === "NAME").props.value,
+          Description: categoryForm.find((el) => el.key === "DESCRIPTION").props
+            .value,
+        };
+        await updateCategory(modalOptions.itemId, DataSet).then(() => {
+          openNotificationWithIcon("success", "Category Successfully Updated");
+          getAndUpdateCategories();
+        });
+
+        break;
+      }
       case "CREATE_HOST": {
         break;
       }
     }
     setModalOptions({});
     setIsModalOpen(false);
+  };
+
+  const updateSingleCategory = (category) => {
+    setIsModalOpen(true);
+    categoryForm.find((el) => el.key === "NAME").props.value = category.Title;
+    categoryForm.find((el) => el.key === "DESCRIPTION").props.value =
+      category.Description;
+    setModalOptions({
+      title: `Update ${category.Title} Category`,
+      template: TemplateCategoryForm,
+      requestType: "UPDATE_CATEGORY",
+      itemId: category._id,
+    });
+  };
+
+  const deleteSingleCategory = async (id) => {
+    await deleteCategory(id).then(() => {
+      getAndUpdateCategories();
+      openNotificationWithIcon("success", "Category Deleted Successfully");
+    });
   };
 
   const getAndUpdateCategories = async () => {
@@ -104,10 +175,17 @@ const Host = () => {
     <>
       <div className={style.contentHost}>
         <div className={style.contentHeader}>
-          <Button type="primary" onClick={onModalOpen}>
+          <Segmented
+            options={tabOptions.current}
+            value={currentTab}
+            onChange={onTabChange}
+            size="medium"
+          />
+
+          <Button size="small" type="primary" onClick={onModalOpen}>
             Create Category
           </Button>
-          <Button type="primary" style={{ background: "#00c29f" }}>
+          <Button size="small" type="primary" style={{ background: "#00c29f" }}>
             Host A Place
           </Button>
         </div>
@@ -125,26 +203,45 @@ const Host = () => {
           </div>
         </Modal>
         <div className={style.contentBody}>
-          <Empty />
-          <Tabs />
-          {dataCategories.map((category, index) => {
-            return (
-              <Card
-                key={index}
-                style={{ width: 300 }}
-                actions={[
-                  <EditOutlined key="edit" />,
-                  <DeleteOutlined key="delete" />,
-                ]}
-              >
-                <Meta
-                  title={category.Title}
-                  description={category.Description}
-                ></Meta>
-              </Card>
-            );
-          })}
-          <div className={style.hosted}></div>
+          {currentTab === "CATEGORIES" ? (
+            <div className={style.categories}>
+              {!dataCategories.length ? (
+                <Empty />
+              ) : (
+                dataCategories.map((category, index) => {
+                  return (
+                    <Card
+                      key={index}
+                      actions={[
+                        <EditOutlined
+                          key="edit"
+                          onClick={() => updateSingleCategory(category)}
+                        />,
+                        <Popconfirm
+                          title={`Delete Category `}
+                          description={`Are you sure to delete ${category.Title} ?`}
+                          key={"delete-confirm"}
+                          onConfirm={() => deleteSingleCategory(category._id)}
+                        >
+                          <DeleteFilled />
+                        </Popconfirm>,
+                      ]}
+                    >
+                      <Meta
+                        avatar={<HomeFilled />}
+                        title={category.Title}
+                        description={category.Description}
+                      />
+                    </Card>
+                  );
+                })
+              )}
+            </div>
+          ) : (
+            <div className={style.hosted}>
+              <Empty />
+            </div>
+          )}
         </div>
       </div>
     </>

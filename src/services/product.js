@@ -12,8 +12,18 @@ export const createCategory = async (body) => {
   });
 };
 
+export const updateCategory = async (id, body) => {
+  return await Axios.put(`/product/updateCategory/${id}`, body).then(
+    (response) => {
+      return response;
+    }
+  );
+};
+
 export const deleteCategory = async (id) => {
-  return await Axios.post(`/product/deletecategory/${id}`).then((response) => {
-    return response;
-  });
+  return await Axios.post(`/product/deletecategory`, { id }).then(
+    (response) => {
+      return response;
+    }
+  );
 };

@@ -5,7 +5,15 @@
     @include flex(flex-end, center, row, 1rem);
   }
   .contentBody {
+    margin-top: 1rem;
     width: 100%;
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 1rem;
+    }
+    .hosted {
+    }
   }
 }
 .modalTitle {
