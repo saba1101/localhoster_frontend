@@ -433,14 +433,20 @@ const Host = () => {
                         title={
                           <>
                             {item.Name} - {item.Price}
-                            <DeleteFilled
-                              onClick={() => deleteSingleHost(item._id)}
-                              style={{
-                                color: "indianred",
-                                marginLeft: "1rem",
-                                cursor: "pointer",
-                              }}
-                            />
+                            <Popconfirm
+                              title={`Delete Host `}
+                              description={`Are you sure to delete ${item.Name} ?`}
+                              key={"delete-confirm"}
+                              onConfirm={() => deleteSingleHost(item._id)}
+                            >
+                              <DeleteFilled
+                                style={{
+                                  color: "indianred",
+                                  marginLeft: "1rem",
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </Popconfirm>
                             <EditOutlined
                               onClick={() => updateSingleHost(item)}
                               style={{ marginLeft: "1rem", cursor: "pointer" }}
