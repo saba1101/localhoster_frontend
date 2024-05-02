@@ -23,6 +23,7 @@ import {
   createHost,
   getAllHosts,
   deleteHost,
+  updateHost,
 } from "../../services/product";
 import { openNotificationWithIcon } from "../../utils/useNotification";
 import {
@@ -85,8 +86,22 @@ const Host = () => {
   const onModalClose = () => {
     setIsModalOpen(false);
     setModalOptions({});
-    categoryForm.find((el) => el.key === "NAME").props.value = "";
-    categoryForm.find((el) => el.key === "DESCRIPTION").props.value = "";
+    setCategoryForm((prev) => {
+      const newCategoryForm = [...prev];
+      newCategoryForm.forEach((el) => (el.props.value = null));
+      return newCategoryForm;
+    });
+    setHostPlaceform((prev) => {
+      const newHostPlaceform = [...prev];
+      newHostPlaceform.forEach((el) => {
+        if (el.key === "IMAGES") {
+          el.props.fileList = [];
+        } else {
+          el.props.value = null;
+        }
+      });
+      return newHostPlaceform;
+    });
   };
 
   const onTabChange = (e) => {
@@ -150,6 +165,24 @@ const Host = () => {
         break;
       }
       case "UPDATE_HOST": {
+        DataSet = {
+          Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
+          Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
+            .props.value,
+          Price: Number(
+            hostPlaceform.find((el) => el.key === "PRICE").props.value
+          ),
+          Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
+          Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
+            .value,
+          Images: hostPlaceform
+            .find((el) => el.key === "IMAGES")
+            .props.fileList.map((f) => f.thumbUrl),
+        };
+        await updateHost(modalOptions.itemId, DataSet).then(() => {
+          openNotificationWithIcon("success", "Host Updated Successfully");
+          getAndUpdateHosts();
+        });
         break;
       }
       case "CREATE_HOST": {
@@ -201,7 +234,7 @@ const Host = () => {
     hostPlaceform.find((el) => el.key === "ABOUT").props.value = host.Article;
     hostPlaceform.find((el) => el.key === "AMENITIES").props.value =
       host.AmenitiesIds.map((e) => e._id);
-
+    hostPlaceform.find((el) => el.key === "IMAGES").props.value = host.Images;
     setModalOptions({
       title: `Update ${host.Name} Host`,
       template: TemplateHotsPlaceForm,
