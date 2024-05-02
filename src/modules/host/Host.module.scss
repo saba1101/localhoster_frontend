@@ -12,6 +12,20 @@
       grid-template-columns: repeat(5, 1fr);
       grid-gap: 1rem;
     }
+    .hosted {
+      box-shadow: 0.0625rem 0px 0.625rem #fafafa;
+      background: #ffff;
+
+      margin-top: 1rem;
+      .coverImage {
+        margin: auto;
+        img {
+          width: 250px;
+          object-fit: contain;
+          aspect-ratio: 1/1;
+        }
+      }
+    }
   }
 }
 .modalTitle {

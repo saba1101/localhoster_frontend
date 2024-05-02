@@ -21,6 +21,10 @@
 
 body {
   background: #fafafa;
+  background-image: url("../assets/bodybg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 ul {

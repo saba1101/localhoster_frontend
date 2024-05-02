@@ -1,4 +1,16 @@
-import { Button, Empty, Modal, Popconfirm, Card, Segmented } from "antd";
+import {
+  Button,
+  Empty,
+  Modal,
+  Popconfirm,
+  Card,
+  Segmented,
+  List,
+  Avatar,
+  Tag,
+  Space,
+  Image,
+} from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
 import { CategoryForm } from "./form/CategoryForm";
@@ -8,6 +20,9 @@ import {
   getCategories,
   deleteCategory,
   updateCategory,
+  createHost,
+  getAllHosts,
+  deleteHost,
 } from "../../services/product";
 import { openNotificationWithIcon } from "../../utils/useNotification";
 import {
@@ -50,6 +65,12 @@ const Host = () => {
         break;
       }
       case "CREATE_HOST": {
+        setHostPlaceform((prev) => {
+          const newHostPlaceForm = [...prev];
+          newHostPlaceForm.find((el) => el.key === "AMENITIES").props.options =
+            dataCategories.map((el) => ({ label: el.Title, value: el._id }));
+          return newHostPlaceForm;
+        });
         setModalOptions({
           title: "Host a Place",
           template: TemplateHotsPlaceForm,
@@ -83,6 +104,16 @@ const Host = () => {
         break;
       }
       case "CREATE_HOST": {
+        setHostPlaceform((prev) => {
+          const newHostPlaceform = [...prev];
+          if (key === "IMAGES") {
+            newHostPlaceform.find((el) => el.key === key).props.fileList =
+              value;
+          } else {
+            newHostPlaceform.find((el) => el.key === key).props.value = value;
+          }
+          return newHostPlaceform;
+        });
         break;
       }
     }
@@ -118,7 +149,28 @@ const Host = () => {
 
         break;
       }
+      case "UPDATE_HOST": {
+        break;
+      }
       case "CREATE_HOST": {
+        DataSet = {
+          Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
+          Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
+            .props.value,
+          Price: Number(
+            hostPlaceform.find((el) => el.key === "PRICE").props.value
+          ),
+          Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
+          Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
+            .value,
+          Images: hostPlaceform
+            .find((el) => el.key === "IMAGES")
+            .props.fileList.map((f) => f.thumbUrl),
+        };
+        await createHost(DataSet).then(() => {
+          openNotificationWithIcon("success", "Host Added Successfully");
+          getAndUpdateHosts();
+        });
         break;
       }
     }
@@ -139,6 +191,25 @@ const Host = () => {
     });
   };
 
+  const updateSingleHost = (host) => {
+    setIsModalOpen(true);
+
+    hostPlaceform.find((el) => el.key === "NAME").props.value = host.Name;
+    hostPlaceform.find((el) => el.key === "DESCRIPTION").props.value =
+      host.Description;
+    hostPlaceform.find((el) => el.key === "PRICE").props.value = host.Price;
+    hostPlaceform.find((el) => el.key === "ABOUT").props.value = host.Article;
+    hostPlaceform.find((el) => el.key === "AMENITIES").props.value =
+      host.AmenitiesIds.map((e) => e._id);
+
+    setModalOptions({
+      title: `Update ${host.Name} Host`,
+      template: TemplateHotsPlaceForm,
+      requestType: "UPDATE_HOST",
+      itemId: host._id,
+    });
+  };
+
   const deleteSingleCategory = async (id) => {
     await deleteCategory(id).then(() => {
       getAndUpdateCategories();
@@ -146,9 +217,22 @@ const Host = () => {
     });
   };
 
+  const deleteSingleHost = async (id) => {
+    await deleteHost(id).then(() => {
+      getAndUpdateHosts();
+      openNotificationWithIcon("success", "Host Deleted Successfully");
+    });
+  };
+
   const getAndUpdateCategories = async () => {
     await getCategories().then((response) => {
       setDataCategories(response.data.categories);
+    });
+  };
+
+  const getAndUpdateHosts = async () => {
+    await getAllHosts().then((response) => {
+      setDataHostedPlaces(response.data);
     });
   };
 
@@ -178,14 +262,27 @@ const Host = () => {
         {hostPlaceform.map((element, index) => {
           return (
             <li key={index}>
-              {
+              {element.key === "IMAGES" ? (
                 <element.component
                   {...element.props}
-                  onChange={(e) =>
-                    updateValues("CREATE_HOST", element.key, e.target.value)
-                  }
+                  onChange={(e) => {
+                    updateValues("CREATE_HOST", element.key, e.fileList);
+                  }}
+                >
+                  Upload
+                </element.component>
+              ) : (
+                <element.component
+                  {...element.props}
+                  onChange={(e) => {
+                    updateValues(
+                      "CREATE_HOST",
+                      element.key,
+                      element.key === "AMENITIES" ? e : e.target.value
+                    );
+                  }}
                 />
-              }
+              )}
             </li>
           );
         })}
@@ -197,6 +294,7 @@ const Host = () => {
     setCategoryForm(CategoryForm);
     setHostPlaceform(HostPlaceForm);
     getAndUpdateCategories();
+    getAndUpdateHosts();
   }, []);
 
   return (
@@ -276,7 +374,86 @@ const Host = () => {
             </div>
           ) : (
             <div className={style.hosted}>
-              <Empty />
+              {!dataHostedPlaces.length ? (
+                <Empty />
+              ) : (
+                <List
+                  itemLayout="vertical"
+                  size="large"
+                  pagination={{
+                    style: { padding: "1rem" },
+                    pageSize: 10,
+                  }}
+                  dataSource={dataHostedPlaces}
+                  footer={
+                    <div style={{ padding: "1rem" }}>
+                      <b>Hosted Places</b> List
+                    </div>
+                  }
+                  renderItem={(item) => (
+                    <List.Item
+                      key={item.Name}
+                      actions={[
+                        <div
+                          style={{ display: "flex", flexWrap: "wrap" }}
+                          key={"Amenities"}
+                        >
+                          <Space wrap={true}>
+                            {item.Amenities.map((amenity, index) => (
+                              <Tag color="#518e86" key={index}>
+                                <Space>
+                                  <HomeFilled />
+                                  {amenity}
+                                </Space>
+                              </Tag>
+                            ))}
+                          </Space>
+                        </div>,
+                      ]}
+                      extra={
+                        <div className={style.coverImage}>
+                          <Image alt="image" src={item.Images[0]} />
+                        </div>
+                      }
+                    >
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar
+                            shape="round"
+                            style={{
+                              backgroundColor: "#518e86",
+                              color: "#ffffff",
+                              verticalAlign: "middle",
+                            }}
+                            size="medium"
+                          >
+                            {item.Author}{" "}
+                          </Avatar>
+                        }
+                        title={
+                          <>
+                            {item.Name} - {item.Price}
+                            <DeleteFilled
+                              onClick={() => deleteSingleHost(item._id)}
+                              style={{
+                                color: "indianred",
+                                marginLeft: "1rem",
+                                cursor: "pointer",
+                              }}
+                            />
+                            <EditOutlined
+                              onClick={() => updateSingleHost(item)}
+                              style={{ marginLeft: "1rem", cursor: "pointer" }}
+                            />
+                          </>
+                        }
+                        description={item.Description}
+                      />
+                      {item.Article}
+                    </List.Item>
+                  )}
+                />
+              )}
             </div>
           )}
         </div>
