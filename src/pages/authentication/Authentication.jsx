@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import style from "@/pages/authentication/Authentication.module.scss";
 import Login from "@/modules/authentication/Login";
 import Register from "@/modules/authentication/Register";
-import { Tabs, Button } from "antd";
+import { Tabs, Button, Spin } from "antd";
 import { LoginForm } from "@/modules/authentication/form/LoginForm.jsx";
 import { RegisterForm } from "@/modules/authentication/form/RegisterForm";
 import { serviceRegister } from "../../services/register";
@@ -14,6 +14,7 @@ import { SetAuth, SetUserDetails } from "../../store/AuthStore";
 
 const Authentication = () => {
   // const isLoggedIn = useSelector((state) => state.AuthStore.isLoggedIn);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [view, setView] = useState("LOGIN");
   const [tabs, setTabs] = useState([]);
@@ -22,6 +23,7 @@ const Authentication = () => {
   const submit = async (e, type) => {
     e.stopPropagation();
     e.preventDefault();
+    setIsLoading(true);
     let dataSet = {};
     switch (type) {
       case "LOGIN": {
@@ -80,6 +82,7 @@ const Authentication = () => {
         break;
       }
     }
+    setIsLoading(false);
   };
 
   const onTabClick = (key) => {
@@ -116,6 +119,8 @@ const Authentication = () => {
 
   return (
     <Fragment>
+      <Spin tip="Loading..." size="large" spinning={isLoading} fullscreen />
+
       <div className={style.authenticaionContainer}>
         <div className={style.authenticaionField}>
           <form onSubmit={(e) => submit(e, view)}>

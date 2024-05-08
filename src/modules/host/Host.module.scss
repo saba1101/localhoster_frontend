@@ -2,7 +2,7 @@
   width: 100%;
   padding: 1rem;
   .contentHeader {
-    @include flex(flex-end, center, row, 1rem);
+    @include flex(space-between, center, row, 1rem);
   }
   .contentBody {
     margin-top: 1rem;

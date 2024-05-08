@@ -10,7 +10,7 @@ import {
   Space,
   Image,
   Drawer,
-  Flex,
+  Spin,
 } from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
@@ -32,10 +32,12 @@ import {
   DeleteFilled,
   HomeFilled,
   TagFilled,
+  ReloadOutlined,
 } from "@ant-design/icons";
 
 const Host = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [modalOptions, setModalOptions] = useState({});
   const [categoryForm, setCategoryForm] = useState([]);
   const [hostPlaceform, setHostPlaceform] = useState([]);
@@ -138,81 +140,90 @@ const Host = () => {
   const submitForm = async (event) => {
     event.preventDefault();
     let DataSet = {};
-    switch (modalOptions.requestType) {
-      case "CREATE_CATEGORY": {
-        DataSet = {
-          Title: categoryForm.find((el) => el.key === "NAME").props.value,
-          Description: categoryForm.find((el) => el.key === "DESCRIPTION").props
-            .value,
-        };
-        await createCategory(DataSet).then(() => {
-          openNotificationWithIcon("success", "Category Added Successfully");
-          getAndUpdateCategories();
-        });
+    setIsLoading(true);
+    try {
+      switch (modalOptions.requestType) {
+        case "CREATE_CATEGORY": {
+          DataSet = {
+            Title: categoryForm.find((el) => el.key === "NAME").props.value,
+            Description: categoryForm.find((el) => el.key === "DESCRIPTION")
+              .props.value,
+          };
+          await createCategory(DataSet).then(() => {
+            openNotificationWithIcon("success", "Category Added Successfully");
+            getAndUpdateCategories();
+          });
 
-        break;
-      }
-      case "UPDATE_CATEGORY": {
-        DataSet = {
-          Title: categoryForm.find((el) => el.key === "NAME").props.value,
-          Description: categoryForm.find((el) => el.key === "DESCRIPTION").props
-            .value,
-        };
-        await updateCategory(modalOptions.itemId, DataSet).then(() => {
-          openNotificationWithIcon("success", "Category Successfully Updated");
-          getAndUpdateCategories();
-        });
+          break;
+        }
+        case "UPDATE_CATEGORY": {
+          DataSet = {
+            Title: categoryForm.find((el) => el.key === "NAME").props.value,
+            Description: categoryForm.find((el) => el.key === "DESCRIPTION")
+              .props.value,
+          };
+          await updateCategory(modalOptions.itemId, DataSet).then(() => {
+            openNotificationWithIcon(
+              "success",
+              "Category Successfully Updated"
+            );
+            getAndUpdateCategories();
+          });
 
-        break;
-      }
-      case "UPDATE_HOST": {
-        DataSet = {
-          Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
-          Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
-            .props.value,
-          Price: Number(
-            hostPlaceform.find((el) => el.key === "PRICE").props.value
-          ),
-          Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
-          Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
-            .value,
-          Images: [
-            ...hostPlaceform.find((el) => el.key === "IMAGES").props.value,
-            ...hostPlaceform
+          break;
+        }
+        case "UPDATE_HOST": {
+          DataSet = {
+            Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
+            Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
+              .props.value,
+            Price: Number(
+              hostPlaceform.find((el) => el.key === "PRICE").props.value
+            ),
+            Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
+            Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
+              .value,
+            Images: [
+              ...hostPlaceform.find((el) => el.key === "IMAGES").props.value,
+              ...hostPlaceform
+                .find((el) => el.key === "IMAGES")
+                .props.fileList.map((f) => f.thumbUrl),
+            ],
+          };
+          await updateHost(modalOptions.itemId, DataSet).then(() => {
+            openNotificationWithIcon("success", "Host Updated Successfully");
+            getAndUpdateHosts();
+          });
+          break;
+        }
+        case "CREATE_HOST": {
+          DataSet = {
+            Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
+            Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
+              .props.value,
+            Price: Number(
+              hostPlaceform.find((el) => el.key === "PRICE").props.value
+            ),
+            Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
+            Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
+              .value,
+            Images: hostPlaceform
               .find((el) => el.key === "IMAGES")
               .props.fileList.map((f) => f.thumbUrl),
-          ],
-        };
-        await updateHost(modalOptions.itemId, DataSet).then(() => {
-          openNotificationWithIcon("success", "Host Updated Successfully");
-          getAndUpdateHosts();
-        });
-        break;
+          };
+          await createHost(DataSet).then(() => {
+            openNotificationWithIcon("success", "Host Added Successfully");
+            getAndUpdateHosts();
+          });
+          break;
+        }
       }
-      case "CREATE_HOST": {
-        DataSet = {
-          Name: hostPlaceform.find((el) => el.key === "NAME").props.value,
-          Description: hostPlaceform.find((el) => el.key === "DESCRIPTION")
-            .props.value,
-          Price: Number(
-            hostPlaceform.find((el) => el.key === "PRICE").props.value
-          ),
-          Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
-          Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
-            .value,
-          Images: hostPlaceform
-            .find((el) => el.key === "IMAGES")
-            .props.fileList.map((f) => f.thumbUrl),
-        };
-        await createHost(DataSet).then(() => {
-          openNotificationWithIcon("success", "Host Added Successfully");
-          getAndUpdateHosts();
-        });
-        break;
-      }
+      setModalOptions({});
+      setIsModalOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
     }
-    setModalOptions({});
-    setIsModalOpen(false);
   };
 
   const updateSingleCategory = (category) => {
@@ -363,39 +374,52 @@ const Host = () => {
     );
   };
 
-  useEffect(() => {
+  const initialCalls = async () => {
+    setIsLoading(true);
     setCategoryForm(CategoryForm);
     setHostPlaceform(HostPlaceForm);
-    getAndUpdateCategories();
-    getAndUpdateHosts();
+    await getAndUpdateCategories();
+    await getAndUpdateHosts();
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    initialCalls();
   }, []);
 
   return (
     <>
+      <Spin tip="Loading..." size="large" spinning={isLoading} fullscreen />
       <div className={style.contentHost}>
         <div className={style.contentHeader}>
+          <div>
+            <Button onClick={initialCalls}>
+              Reload <ReloadOutlined />
+            </Button>
+          </div>
           <Segmented
             options={tabOptions.current}
             value={currentTab}
             onChange={onTabChange}
             size="medium"
           />
-
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => onModalOpen("CREATE_CATEGORY")}
-          >
-            Create Category
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => onModalOpen("CREATE_HOST")}
-            style={{ background: "#00c29f" }}
-          >
-            Host A Place
-          </Button>
+          <Space>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => onModalOpen("CREATE_CATEGORY")}
+            >
+              Create Category
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => onModalOpen("CREATE_HOST")}
+              style={{ background: "#00c29f" }}
+            >
+              Host A Place
+            </Button>
+          </Space>
         </div>
         <Drawer
           width={"100%"}
@@ -534,7 +558,10 @@ const Host = () => {
                             </Popconfirm>
                             <EditOutlined
                               onClick={() => updateSingleHost(item)}
-                              style={{ marginLeft: "1rem", cursor: "pointer" }}
+                              style={{
+                                marginLeft: "1rem",
+                                cursor: "pointer",
+                              }}
                             />
                           </>
                         }
