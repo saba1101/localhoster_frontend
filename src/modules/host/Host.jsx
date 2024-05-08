@@ -1,7 +1,6 @@
 import {
   Button,
   Empty,
-  Modal,
   Popconfirm,
   Card,
   Segmented,
@@ -11,6 +10,7 @@ import {
   Space,
   Image,
   Drawer,
+  Flex,
 } from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
@@ -176,9 +176,12 @@ const Host = () => {
           Article: hostPlaceform.find((el) => el.key === "ABOUT").props.value,
           Amenities: hostPlaceform.find((el) => el.key === "AMENITIES").props
             .value,
-          Images: hostPlaceform
-            .find((el) => el.key === "IMAGES")
-            .props.fileList.map((f) => f.thumbUrl),
+          Images: [
+            ...hostPlaceform.find((el) => el.key === "IMAGES").props.value,
+            ...hostPlaceform
+              .find((el) => el.key === "IMAGES")
+              .props.fileList.map((f) => f.thumbUrl),
+          ],
         };
         await updateHost(modalOptions.itemId, DataSet).then(() => {
           openNotificationWithIcon("success", "Host Updated Successfully");
@@ -270,6 +273,17 @@ const Host = () => {
     });
   };
 
+  const removeUploadedImage = (img) => {
+    setHostPlaceform((prev) => {
+      const newHostPlaceform = [...prev];
+      newHostPlaceform.find((el) => el.key === "IMAGES").props.value =
+        newHostPlaceform
+          .find((el) => el.key === "IMAGES")
+          .props.value.filter((src) => src !== img);
+      return newHostPlaceform;
+    });
+  };
+
   const TemplateCategoryForm = () => {
     return (
       <ul>
@@ -290,21 +304,46 @@ const Host = () => {
       </ul>
     );
   };
-  const TemplateHotsPlaceForm = () => {
+  const TemplateHotsPlaceForm = (itemId) => {
     return (
       <ul>
         {hostPlaceform.map((element, index) => {
           return (
             <li key={index}>
               {element.key === "IMAGES" ? (
-                <element.component
-                  {...element.props}
-                  onChange={(e) => {
-                    updateValues("CREATE_HOST", element.key, e.fileList);
-                  }}
-                >
-                  Upload
-                </element.component>
+                <>
+                  <Space>
+                    <element.component
+                      {...element.props}
+                      onChange={(e) => {
+                        updateValues("CREATE_HOST", element.key, e.fileList);
+                      }}
+                    >
+                      Upload
+                    </element.component>
+                    {itemId &&
+                      element.props.value.map((img, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "1rem",
+                          }}
+                        >
+                          <Image src={img} width={150} />
+                          <Button
+                            danger
+                            type="primary"
+                            onClick={() => removeUploadedImage(img)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                  </Space>
+                </>
               ) : (
                 <element.component
                   {...element.props}
@@ -378,7 +417,7 @@ const Host = () => {
           <div className={style.modalTitle}>
             <h1>{modalOptions?.title}</h1>
             <div className={style.modalForm}>
-              {isModalOpen && modalOptions?.template()}
+              {isModalOpen && modalOptions?.template(modalOptions.itemId)}
             </div>
           </div>
         </Drawer>
