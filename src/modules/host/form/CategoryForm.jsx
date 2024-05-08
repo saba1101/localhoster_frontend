@@ -7,7 +7,7 @@ export const CategoryForm = [
     props: {
       value: "",
       placeholder: "Enter Category Name",
-      size: "medium",
+      size: "large",
       type: "text",
     },
   },
@@ -17,7 +17,7 @@ export const CategoryForm = [
     props: {
       value: "",
       placeholder: "Enter Category Description",
-      size: "medium",
+      size: "large",
       type: "text",
     },
   },

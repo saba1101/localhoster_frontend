@@ -398,6 +398,7 @@ const Host = () => {
           </Button>
         </div>
         <Drawer
+          width={"100%"}
           title={"Create and configure content"}
           placement="top"
           height={"100%"}
