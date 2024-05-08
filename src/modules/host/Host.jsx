@@ -10,6 +10,7 @@ import {
   Tag,
   Space,
   Image,
+  Drawer,
 } from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
@@ -357,11 +358,22 @@ const Host = () => {
             Host A Place
           </Button>
         </div>
-        <Modal
+        <Drawer
+          title={"Create and configure content"}
+          placement="top"
+          height={"100%"}
           open={isModalOpen}
           okText="Save"
-          onOk={submitForm}
-          onCancel={onModalClose}
+          // onOk={submitForm}
+          onClose={onModalClose}
+          footer={
+            <Space>
+              <Button onClick={onModalClose}>Cancel</Button>
+              <Button type="primary" onClick={submitForm}>
+                OK
+              </Button>
+            </Space>
+          }
         >
           <div className={style.modalTitle}>
             <h1>{modalOptions?.title}</h1>
@@ -369,7 +381,7 @@ const Host = () => {
               {isModalOpen && modalOptions?.template()}
             </div>
           </div>
-        </Modal>
+        </Drawer>
         <div className={style.contentBody}>
           {currentTab === "CATEGORIES" ? (
             <div className={style.categories}>
