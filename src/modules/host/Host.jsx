@@ -11,6 +11,7 @@ import {
   Image,
   Drawer,
   Spin,
+  Tooltip,
 } from "antd";
 import style from "@/modules/host/Host.module.scss";
 import { useEffect, useRef, useState } from "react";
@@ -509,12 +510,14 @@ const Host = () => {
                         >
                           <Space wrap={true}>
                             {item.Amenities.map((amenity, index) => (
-                              <Tag color="#518e86" key={index}>
-                                <Space>
-                                  <HomeFilled />
-                                  {amenity}
-                                </Space>
-                              </Tag>
+                              <Tooltip key={index} title={amenity.Description}>
+                                <Tag color="#518e86">
+                                  <Space>
+                                    <HomeFilled />
+                                    {amenity.Title}
+                                  </Space>
+                                </Tag>
+                              </Tooltip>
                             ))}
                           </Space>
                         </div>,
