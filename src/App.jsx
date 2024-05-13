@@ -6,6 +6,7 @@ import { setupAxiosInterceptors } from "./utils/axios";
 import Header from "./components/header/Header";
 import { getUserDetails } from "./services/user";
 import { SetAuth, SetUserDetails } from "./store/AuthStore";
+import NotFound from "./components/404";
 
 function App() {
   const isLoggedIn = useSelector((state) => state.AuthStore.isLoggedIn);
@@ -43,6 +44,7 @@ function App() {
           {routes.map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />
           ))}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       )}
     </Fragment>

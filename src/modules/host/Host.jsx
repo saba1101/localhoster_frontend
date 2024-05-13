@@ -242,15 +242,24 @@ const Host = () => {
 
   const updateSingleHost = (host) => {
     setIsModalOpen(true);
+    setHostPlaceform((prev) => {
+      const newHostPlaceform = [...prev];
+      newHostPlaceform.find((el) => el.key === "NAME").props.value = host.Name;
+      newHostPlaceform.find((el) => el.key === "DESCRIPTION").props.value =
+        host.Description;
+      newHostPlaceform.find((el) => el.key === "PRICE").props.value =
+        host.Price;
+      newHostPlaceform.find((el) => el.key === "ABOUT").props.value =
+        host.Article;
+      newHostPlaceform.find((el) => el.key === "AMENITIES").props.options =
+        dataCategories.map((el) => ({ label: el.Title, value: el._id }));
+      newHostPlaceform.find((el) => el.key === "AMENITIES").props.value =
+        host?.Amenities.map((e) => e._id);
+      newHostPlaceform.find((el) => el.key === "IMAGES").props.value =
+        host.Images;
+      return newHostPlaceform;
+    });
 
-    hostPlaceform.find((el) => el.key === "NAME").props.value = host.Name;
-    hostPlaceform.find((el) => el.key === "DESCRIPTION").props.value =
-      host.Description;
-    hostPlaceform.find((el) => el.key === "PRICE").props.value = host.Price;
-    hostPlaceform.find((el) => el.key === "ABOUT").props.value = host.Article;
-    hostPlaceform.find((el) => el.key === "AMENITIES").props.value =
-      host.AmenitiesIds.map((e) => e._id);
-    hostPlaceform.find((el) => el.key === "IMAGES").props.value = host.Images;
     setModalOptions({
       title: `Update ${host.Name} Host`,
       template: TemplateHotsPlaceForm,
@@ -281,7 +290,7 @@ const Host = () => {
 
   const getAndUpdateHosts = async () => {
     await getAllHosts().then((response) => {
-      setDataHostedPlaces(response.data);
+      setDataHostedPlaces(response.data?.reverse() ?? []);
     });
   };
 

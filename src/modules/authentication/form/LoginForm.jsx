@@ -1,4 +1,5 @@
 import Input from "antd/es/input/Input";
+import { UserOutlined, SecurityScanOutlined } from "@ant-design/icons";
 export const LoginForm = [
   {
     component: Input,
@@ -7,6 +8,7 @@ export const LoginForm = [
       value: "",
       placeholder: "Username",
       size: "large",
+      prefix: <UserOutlined />,
     },
   },
   {
@@ -17,6 +19,7 @@ export const LoginForm = [
       placeholder: "Password",
       type: "password",
       size: "large",
+      prefix: <SecurityScanOutlined />,
     },
   },
 ];

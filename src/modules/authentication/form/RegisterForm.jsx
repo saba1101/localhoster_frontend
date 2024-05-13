@@ -1,4 +1,9 @@
 import Input from "antd/es/input/Input";
+import {
+  UserOutlined,
+  SecurityScanOutlined,
+  GooglePlusOutlined,
+} from "@ant-design/icons";
 export const RegisterForm = [
   {
     component: Input,
@@ -8,6 +13,7 @@ export const RegisterForm = [
       placeholder: "Email",
       size: "large",
       type: "email",
+      prefix: <GooglePlusOutlined />,
     },
   },
   {
@@ -17,6 +23,7 @@ export const RegisterForm = [
       value: "",
       placeholder: "Username",
       size: "large",
+      prefix: <UserOutlined />,
     },
   },
   {
@@ -27,6 +34,7 @@ export const RegisterForm = [
       placeholder: "Password",
       type: "password",
       size: "large",
+      prefix: <SecurityScanOutlined />,
     },
   },
 ];
