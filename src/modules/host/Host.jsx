@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from "antd";
 import style from "@/modules/host/Host.module.scss";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { CategoryForm } from "./form/CategoryForm";
 import { HostPlaceForm } from "./form/HostPlaceForm";
 import {
@@ -45,6 +45,8 @@ const Host = () => {
   const [dataCategories, setDataCategories] = useState([]);
   const [dataHostedPlaces, setDataHostedPlaces] = useState([]);
   const [currentTab, setCurentTab] = useState("CATEGORIES");
+  const { Meta } = Card;
+
   const tabOptions = useRef([
     {
       label: "Categories",
@@ -58,7 +60,6 @@ const Host = () => {
     },
   ]);
 
-  const { Meta } = Card;
   const onModalOpen = (type) => {
     switch (type) {
       case "CREATE_CATEGORY": {
@@ -332,7 +333,7 @@ const Host = () => {
           return (
             <li key={index}>
               {element.key === "IMAGES" ? (
-                <>
+                <Fragment>
                   <Space>
                     <element.component
                       {...element.props}
@@ -364,7 +365,7 @@ const Host = () => {
                         </div>
                       ))}
                   </Space>
-                </>
+                </Fragment>
               ) : (
                 <element.component
                   {...element.props}
@@ -398,7 +399,7 @@ const Host = () => {
   }, []);
 
   return (
-    <>
+    <Fragment>
       <Spin tip="Loading..." size="large" spinning={isLoading} fullscreen />
       <div className={style.contentHost}>
         <div className={style.contentHeader}>
@@ -552,7 +553,7 @@ const Host = () => {
                           </Avatar>
                         }
                         title={
-                          <>
+                          <Fragment>
                             {item.Name} - {item.Price}
                             <Popconfirm
                               title={`Delete Host `}
@@ -575,7 +576,7 @@ const Host = () => {
                                 cursor: "pointer",
                               }}
                             />
-                          </>
+                          </Fragment>
                         }
                         description={item.Description}
                       />
@@ -588,7 +589,7 @@ const Host = () => {
           )}
         </div>
       </div>
-    </>
+    </Fragment>
   );
 };
 

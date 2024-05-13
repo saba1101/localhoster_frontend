@@ -1,6 +1,8 @@
+import { Fragment } from "react";
+
 const Search = () => {
   return (
-    <>
+    <Fragment>
       <h1>
         Find a <span>Host</span> for every journey
       </h1>
@@ -8,7 +10,7 @@ const Search = () => {
         Discover the best local rental properties that fits you every travel
         needs
       </p>
-    </>
+    </Fragment>
   );
 };
 
