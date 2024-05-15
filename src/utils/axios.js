@@ -24,6 +24,7 @@ const handleSessionExpired = (dispatch) => {
   window.localStorage.setItem("isLoggedIn", false);
   window.localStorage.setItem("token", null);
   dispatch(SetAuth(false));
+  location.reload();
 };
 
 const Axios = axios.create({ ...config });
