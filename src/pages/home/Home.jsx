@@ -31,7 +31,7 @@ const Home = () => {
             return (
               <Card
                 key={index}
-                image={host.Images[0] ? host.Images[0] : null}
+                image={host.Images[0] ? host.Images[0] : ""}
                 name={host.Name}
                 price={host.Price}
                 rate={0}

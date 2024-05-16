@@ -10,8 +10,8 @@ const Card = ({ name, image, price, rate, description }) => {
           <div
             className={style.imageFrame}
             style={{
-              backgroundImage: `url(${image.split(",")[0]},${
-                image.split(",")[1]
+              backgroundImage: `url(${image.length && image.split(",")[0]},${
+                image.length && image.split(",")[1]
               })`,
             }}
           ></div>
@@ -34,7 +34,10 @@ const Card = ({ name, image, price, rate, description }) => {
             </div>
           </div>
           <div className={style.bottomContent}>
-            <h1 className={style.price}>${price}/night</h1>
+            <h1 className={style.price}>
+              ${price}
+              <span>/night</span>
+            </h1>
           </div>
         </div>
       </div>

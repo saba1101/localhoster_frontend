@@ -1,11 +1,13 @@
 .cardContainer {
   max-height: 25rem;
   border: 0.125rem solid rgba(#e8ecf2, 0.6);
-  background: #fff;
+  background: #fafafa;
   border-radius: 0.375rem;
   overflow: hidden;
   //   background: rgba(#fff, 0.8);
   @include flex(space-between, initial, column, initial);
+  font-weight: 400;
+  cursor: pointer;
   .cardCover {
     width: 100%;
     height: 15.625rem;
@@ -16,14 +18,16 @@
       height: 100%;
       overflow: hidden;
       background-repeat: no-repeat;
-      background-size: cover;
+      background-size: contain;
       background-position: center;
+      background: #ffffff center center;
+      background-repeat: no-repeat;
+      border-radius: 0.5rem;
     }
   }
 
   .cardBody {
     padding: 0.5rem;
-
     background: #fff;
     .topContent {
       @include flex(space-between, flex-start, row, initial);
@@ -44,6 +48,11 @@
       margin-top: 1rem;
       h1 {
         font-size: 1.125rem;
+        font-weight: 500;
+        span {
+          font-size: 0.9375rem;
+          color: #787878;
+        }
       }
     }
   }
