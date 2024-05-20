@@ -25,62 +25,66 @@ const Authentication = () => {
     e.preventDefault();
     setIsLoading(true);
     let dataSet = {};
-    switch (type) {
-      case "LOGIN": {
-        dataSet = {
-          UserName: form.find((el) => el.key === "USERNAME").props.value,
-          Password: form.find((el) => el.key === "PASSWORD").props.value,
-        };
-        await serviceLogin(JSON.stringify(dataSet)).then((response) => {
-          if (response.data) {
-            window.localStorage.setItem("token", response.data.token);
-            window.localStorage.setItem("isLoggedIn", true);
-            window.localStorage.setItem("userId", response.data.user._id);
+    try {
+      switch (type) {
+        case "LOGIN": {
+          dataSet = {
+            UserName: form.find((el) => el.key === "USERNAME").props.value,
+            Password: form.find((el) => el.key === "PASSWORD").props.value,
+          };
+          await serviceLogin(JSON.stringify(dataSet)).then((response) => {
+            if (response.data) {
+              window.localStorage.setItem("token", response.data.token);
+              window.localStorage.setItem("isLoggedIn", true);
+              window.localStorage.setItem("userId", response.data.user._id);
 
-            setForm((prev) => {
-              const newForm = [...prev];
-              newForm.forEach((el) => (el.props.value = ""));
-              return newForm;
-            });
-            openNotificationWithIcon(
-              "success",
-              "Login Complete",
-              response.data.message
-            );
-            navigate("/");
-            dispatch(SetAuth(true));
-            dispatch(SetUserDetails(response.data.user));
-          } else {
-            window.localStorage.setItem("isLoggedIn", false);
-            window.localStorage.setItem("userId", null);
-            dispatch(SetAuth(false));
-            dispatch(SetUserDetails({}));
-          }
-        });
-        break;
+              setForm((prev) => {
+                const newForm = [...prev];
+                newForm.forEach((el) => (el.props.value = ""));
+                return newForm;
+              });
+              openNotificationWithIcon(
+                "success",
+                "Login Complete",
+                response.data.message
+              );
+              navigate("/");
+              dispatch(SetAuth(true));
+              dispatch(SetUserDetails(response.data.user));
+            } else {
+              window.localStorage.setItem("isLoggedIn", false);
+              window.localStorage.setItem("userId", null);
+              dispatch(SetAuth(false));
+              dispatch(SetUserDetails({}));
+            }
+          });
+          break;
+        }
+        case "REGISTER": {
+          dataSet = {
+            Email: form.find((el) => el.key === "EMAIL").props.value,
+            UserName: form.find((el) => el.key === "USERNAME").props.value,
+            Password: form.find((el) => el.key === "PASSWORD").props.value,
+          };
+          await serviceRegister(JSON.stringify(dataSet)).then((response) => {
+            if (response.data) {
+              setForm((prev) => {
+                const newForm = [...prev];
+                newForm.forEach((el) => (el.props.value = ""));
+                return newForm;
+              });
+              openNotificationWithIcon(
+                "success",
+                "Register Complete",
+                "User Create Successfully"
+              );
+            }
+          });
+          break;
+        }
       }
-      case "REGISTER": {
-        dataSet = {
-          Email: form.find((el) => el.key === "EMAIL").props.value,
-          UserName: form.find((el) => el.key === "USERNAME").props.value,
-          Password: form.find((el) => el.key === "PASSWORD").props.value,
-        };
-        await serviceRegister(JSON.stringify(dataSet)).then((response) => {
-          if (response.data) {
-            setForm((prev) => {
-              const newForm = [...prev];
-              newForm.forEach((el) => (el.props.value = ""));
-              return newForm;
-            });
-            openNotificationWithIcon(
-              "success",
-              "Register Complete",
-              "User Create Successfully"
-            );
-          }
-        });
-        break;
-      }
+    } catch (error) {
+      setIsLoading(false);
     }
     setIsLoading(false);
   };

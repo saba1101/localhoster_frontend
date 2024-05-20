@@ -40,6 +40,12 @@ export const getAllHosts = async (body) => {
   });
 };
 
+export const getSingleHost = async (id) => {
+  return await Axios.get(`/product/getHost/${id}`).then((response) => {
+    return response;
+  });
+};
+
 export const updateHost = async (id, body) => {
   return await Axios.put(`/product/updateHost/${id}`, body).then((response) => {
     return response;

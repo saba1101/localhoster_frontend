@@ -3,10 +3,11 @@ import style from "./Home.module.scss";
 import { getAllHosts } from "../../services/product";
 import Card from "../../components/card/Card";
 import { Spin } from "antd";
+import { useNavigate } from "react-router";
 const Home = () => {
   const [dataHostedPlaces, setDataHostedPlaces] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const initialCalls = async () => {
     setIsLoading(true);
     try {
@@ -36,6 +37,9 @@ const Home = () => {
                 price={host.Price}
                 rate={0}
                 description={host.Description}
+                onClick={() => {
+                  navigate(`/host/${host._id}`);
+                }}
               />
             );
           })}

@@ -2,10 +2,10 @@ import { Fragment } from "react";
 import style from "./Card.module.scss";
 import { StarFilled } from "@ant-design/icons";
 import { Tooltip } from "antd";
-const Card = ({ name, image, price, rate, description }) => {
+const Card = ({ name, image, price, rate, description, onClick }) => {
   return (
     <Fragment>
-      <div className={style.cardContainer}>
+      <div className={style.cardContainer} onClick={onClick}>
         <div className={style.cardCover}>
           <div
             className={style.imageFrame}
